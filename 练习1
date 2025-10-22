@@ -1,0 +1,28 @@
+#include<stdio.h>
+int main(){
+	int n;
+	scanf("%d\n",&n);//录入n份成绩
+	int arr[n]={0};
+	for(int i=0;i<n;i++){
+		scanf("%d",&arr[i]);
+
+	}
+	int be[3]={0};
+	for(int i=0;i<3;i++){//录入一二三等奖分数
+		scanf("%d",&be[i]);
+	}
+	int b;
+	scanf("%d",&b);
+	if(b<1||b>3)
+	printf("输入错误"); 
+	int a=0;
+	for(int i=0;i<n;i++){
+		if (arr[i]>=be[3-b])
+		a++;
+	}
+
+	printf("%d",a);//输出达到一等奖人数
+	
+	
+	return 0;
+}
