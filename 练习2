@@ -1,0 +1,90 @@
+#include<stdio.h>//没优化 ，下次一定 
+void a(int b,long long sum11[],long long*p1);
+void brr(int b,long long sum11[],long long*p1);
+void crr(int b,long long sum11[],long long *p1,long long*p2);
+void drr(int b,long long sum11[],long long *p1,long long *p2);
+int main(){
+	int n;
+	scanf("%d",&n);
+long long arr[n*n]={0};
+	for(int i=0;i<n*n;i++){
+		scanf("%lld",&arr[i]);//4到9行没有问题 
+	}
+	long long sum1[n],sum2[n],sum3[n],sum4[n],sum5[n],sum6[n];
+	long long*p1=sum1,*p2=sum2,*p3=sum3,*p4=sum4,*p5=sum5,*p6=sum6;
+	
+	
+    a(n,arr,p1);
+
+	 brr(n,arr,p2);
+
+     crr(n,arr,p3,p4);
+
+  drr(n,arr,p5,p6);//调用4个函数（懒得取名了) 
+
+  
+	long long* krr[6]={p1,p2,p3,p4,p5,p6};//指针数组 
+	long long m=*krr[0];
+	for(int i=0;i<6;i++){
+		for(int j=0;j<n;j++){
+		
+	    if(m<*(krr[i]+j)){
+	    m=*(krr[i]+j);	}
+
+		}
+	
+	}//内循环读取一个函数计算出来的数组，外循环6次，因为函数6个 
+	printf("%lld",m);//打印出最大值，横纵斜 
+	return 0;
+}
+void a(int b,long long sum11[],long long*p1){  //横排之和	
+long long arr[b]={0};
+for(int j=0;j<b;j++){
+
+	for(int i=0;i<b;i++){
+	arr[j]	=sum11[j*b+i]+arr[j];
+	}
+	*p1=arr[j];
+	p1++;
+	}
+}
+void brr(int b,long long sum11[],long long*p1){  //纵排之和	
+long long arr[b]={0};
+for(int j=0;j<b;j++){
+
+	for(int i=0;i<b;i++){
+	arr[j]	=sum11[j+i*b]+arr[j];//累加 
+	}
+	*p1=arr[j];//直接操作地址 
+	p1++;
+	}
+}
+void crr(int b,long long sum11[],long long *p1,long long *p2){//   /之和 
+	long long arr[b]={0};
+	long long brr[b]={0};
+	for(int i=0;i<b;i++){
+	for(int j=0;j<=i;j++){
+		arr[i]=arr[i]+sum11[i+j*(b-1)];	
+			brr[i]=brr[i]+sum11[b*b-1-i*b+j*(b-1)];//   /的特点是矩阵地址相加为定值 
+	}
+		*p1=arr[i];	p1++;	
+				*p2=brr[i];	p2++;
+	}
+	
+}
+
+void drr(int b,long long sum11[],long long *p1,long long *p2){//   \之和 
+long long arr[b]={0};
+	long long brr[b]={0};
+	for(int i=0;i<b;i++){
+	for(int j=0;j<=i;j++){
+		arr[i]=arr[i]+sum11[b-1-i+j*(b+1)];
+		brr[i]=brr[i]+sum11[b*(b-1)-i*b+j*(b+1)];//   \的特点是矩阵地址相减为定值
+		
+	}
+		*p1=arr[i];	p1++;	
+			*p2=brr[i];p2++;
+	}
+	
+}
+	
