@@ -1,0 +1,64 @@
+#include<stdio.h>//最近有点懈怠，学了py也没做题，c学点基础语法，算法数据库结合其他语言学吧
+#include<string.h>
+#include<math.h>
+typedef struct student{//定义一个结构体，将学生数据打包储存
+	char name[12];
+	double f;
+}s;
+void swap(s *a,s*b){//定义交换结构体函数
+	s k;
+	k=*a;
+	*a=*b;
+	*b=k;
+} 
+void quick1(s arr[],int low,int high){//通过迭代实现代码核心功能，快速排序
+	int k; 
+	if(high>low){
+	int j=low-1;
+for(int i=low;i<high;i++){
+	if(arr[high-1].f<arr[i].f||(fabs(arr[high-1].f-arr[i].f)<0.00001&&strcmp(arr[high-1].name,arr[i].name)>0))
+	{
+		j+=1;
+		swap(&arr[j],&arr[i]);
+	}
+}
+j+=1;
+	swap(&arr[j],&arr[high-1]);
+k=j; 
+quick1(arr,low,k);
+quick1(arr,k+1,high);
+}
+}
+int main(){
+	int n,m;
+	scanf("%d%d",&n,&m);
+	s students[n];
+	int arr[n][m];
+  
+	for(int i=0;i<n;i++){
+		scanf("%s",&students[i].name);
+		for(int j=0;j<m;j++){
+			scanf("%d",&arr[i][j]);
+		}
+	}
+	
+	for(int i=0;i<n;i++){
+  	double k=0,k1=0;
+  	for(int j=0;j<m;j++)
+    {
+		  k+=arr[i][j];
+	  }
+  	k=k/m;//计算方差，精度要求不高
+  	for(int j=0;j<m;j++)
+    {
+  		 k1+=(arr[i][j]-k)*(arr[i][j]-k);
+	  }
+  	 students[i].f=k1;}
+	quick1(students,0,n);
+	if(n>20)n=20; 
+	for(int i=0;i<n;i++)
+  {
+		printf("%s\n",students[i].name);输出
+	}
+	return 0;
+}
