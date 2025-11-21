@@ -1,0 +1,40 @@
+#include<stdio.h>//回顾一下指针和字符串相关知识，太久没用有点忘了
+#include<string.h>
+void swap(char a[],char b[]){//利用指针交换字符串
+	char k[20];
+	strcpy(k,a);
+	strcpy(a,b);
+	strcpy(b,k);
+} 
+
+void kuaipai(char arr[][20],int low,int high){//快速排序的实现
+	int j=low-1;
+	if(high>low)
+	{
+		for(int i=low;i<high-1;i++)
+		{
+			char brr[20], crr[20] ;
+			strcpy(brr,arr[high-1]);
+				strcpy(crr,arr[i]);
+			if(strcmp(strcat(brr,arr[i]),strcat(crr,arr[high-1]))<0){//核心：拼接两个字符串再比较，大的放前，在保证字符串长度相同的基础才能比较
+				j+=1;
+				swap(arr[i],arr[j]);}
+		}
+		j+=1;
+		swap(arr[j],arr[high-1]);
+		kuaipai( arr, low,j);
+		kuaipai( arr, j+1,high);	
+	}
+} 
+int main(){
+	int n;
+	scanf("%d",&n);
+	char arr[n][20];
+	for(int i=0;i<n;i++)
+	scanf("%s",arr[i]);
+	
+	kuaipai(arr,0,n);
+	for(int i=0;i<n;i++)
+	printf("%s",arr[i]);//后面简单调用，输入输出，得到一个字典序最大字符串
+	return 0;
+}
