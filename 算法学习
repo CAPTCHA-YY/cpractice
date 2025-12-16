@@ -1,4 +1,4 @@
-#include<stdio.h>//最近有点懈怠，学了py也没做题，c学点基础语法，算法数据库结合其他语言学吧
+#include<stdio.h>//最近有点懈怠，学了py也没做题，c学点基础语法，算法数据结构结合其他语言学吧
 #include<string.h>
 #include<math.h>
 typedef struct student{//定义一个结构体，将学生数据打包储存
