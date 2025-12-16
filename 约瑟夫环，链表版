@@ -1,0 +1,64 @@
+#include <stdio.h>//初认识指针链表，（约瑟夫环）
+#include <stdlib.h>
+
+int brr[1000];//用来存储淘汰的id
+
+typedef struct xnode{//环的节点，结构体里分别储存当前位置的编号和下一个节点的位置
+	int id;
+	xnode *next;
+}xnode;
+
+xnode*  delete1( int n,xnode* head,int m){//删掉目标指针的函数 
+	
+	int step=1;
+	xnode* temp=head;//这个head其实不正确，应该是tail，为了防止步数为1重新遍历链表，故从tail开始，更简洁但是不好理解
+
+	while(step++<n){
+		temp=temp->next;//循环遍历步数
+	}
+
+	brr[m]=(temp->next)->id;//记录被删除节点的id
+	xnode* k=temp->next;
+	temp->next=k->next;
+	free(k);//释放被删除节点内存空间
+	 return temp;//返回tail
+   }
+
+xnode* create(int n){   //略显啰嗦的创建一个链表，感觉很多变量没必要，比如tail，下次注意
+	xnode* head=(xnode*)malloc(sizeof(xnode));
+	xnode* tail;
+	xnode* temp=head;
+
+	for(int i=1;i<n;i++){
+	xnode*	temp1=(xnode*)malloc(sizeof(xnode));
+   temp->next=temp1;
+	temp->id=i;
+	temp=temp1;
+	}
+
+	tail=temp;//首尾相连
+	tail->id=n;
+	tail->next=head;
+	return tail;
+}
+
+
+int main(){
+	int n;
+	scanf("%d",&n);
+	xnode* tail=create(n);
+	int arr[n];
+	for(int i=0;i<n;i++)	
+	scanf("%d",&arr[i]);
+
+	for(int i=0;i<n-1;i++){
+		xnode* k=delete1(arr[i],tail,i); //通过循环删除，开始用递归好像栈爆炸了
+		tail=k;
+	}
+
+	brr[n-1]=tail->id;
+for(int i=0;i<n;i++)
+printf("%d ",brr[i]);
+	
+	return 0;
+} 
