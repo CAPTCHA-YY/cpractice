@@ -1,0 +1,47 @@
+#include<stdio.h>//将这个写进来主要是因为一个处理矩阵的小技巧，边界处理加1或2，p什么的一个方法，很好用，省去很多判断，还有就是二维数组动态内存分配，先不写注释了，待会补上
+#include<stdlib.h>
+int compare(const void *a,const void*b){
+	return *(int*)a-*(int *)b;
+}
+int main1(){
+	
+	int m,n,c;
+	scanf("%d%d%d",&n,&m,&c);
+	int *date=(int*)malloc((n+1)*(m+1)*4); 
+	int** arr=(int**)malloc((n+1)*(sizeof(int*))); 
+	int *date1=(int*)malloc((n+1)*(m+1)*4); 
+	int** dp=(int**)malloc((n+1)*(sizeof(int*))); 
+	for(int i=0;i<n+1;i++){
+		arr[i]=date+i*(m+1);
+	} 
+	for(int i=0;i<n+1;i++){
+		dp[i]=date1+i*(m+1);
+	} 
+	for(int i=0;i<=n;i++)
+	dp[i][0]=0;
+	for(int j=0;j<m;j++)
+	dp[0][j]=0;
+	for(int i=1;i<=n;i++)
+		for(int j=1;j<=m;j++)
+			scanf("%d",&arr[i][j]);
+		int	sum[c]={0};
+		
+		for(int i=1;i<=n;i++){
+			for(int j=1;j<=m;j++){
+				dp[i][j]=dp[i-1][j]+dp[i][j-1]+arr[i][j]-dp[i-1][j-1];		
+			}
+		}
+	for(int k=0;k<c;k++) {
+		int x1,y1,x2,y2;
+		scanf("%d%d%d%d",&x1,&y1,&x2,&y2);
+		sum[k]=(dp[x2][y2]-dp[x1-1][y2]-dp[x2][y1-1]+dp[x1-1][y1-1]);
+	}
+			for(int k=0;k<c;k++)	
+			printf("%d\n",sum[k]);
+	free(arr);
+	free(date);
+	free(dp);
+	free(date1);
+
+	return 0;
+}
