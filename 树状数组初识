@@ -1,0 +1,104 @@
+#include<stdio.h>//树状数组，理解加写好几天，改优雅写注释又几天，特此纪念
+#include<stdlib.h>
+
+typedef struct {//定义结构体，封装一个树状数组指针和它的大小n 
+	int *tree;
+	int n;
+}treearr; 
+
+treearr* createtree(int n){//创建结构体并将其大小（指n）初始化并分配树状数组内存 
+	treearr *ftree;
+	ftree=(treearr*)malloc(sizeof(treearr));
+	ftree->tree=(int*)calloc(n+1,sizeof(int));
+	ftree->n=n;
+	return ftree;//返回结构体指针 
+}
+
+void deletetree(treearr *ftree){//将结构体和树状数组内存空间释放 
+	free(ftree->tree);
+	free(ftree);
+}	
+
+//用来找到经历一轮后剩下人中第几个要删掉，pos指走几步，remaining表示场上还有多少人 
+ int   find_rank(int current,int pos,int remaining){//current 指的是包含该位置前面还有多少人 
+    int rank;
+    rank=(current+pos-1)%remaining+1;
+	/*减一是为了对应取余 ，当current+pos等于remaining时，直接取余会变成0，
+	但我们要的是被删除值的序号排名*/
+	return rank;
+	}
+	
+/*
+  更新树状数组的核心函数 
+  树状数组核心结构，也是一种同树一般管理数据的结构 
+  a&-a得到二进制a的最低位1，因为任意一个数都可以转化成二进制，
+  所以可以将二进制下的每个1视为小头目，管理树的节点下的所有数据
+  这样的好处是查询的时间复杂度可以大大降低，logn，
+  比遍历二分平均分配，无论从查找的速度和修改的速度都快
+  arr指的就是树状数组，current指要修改的节点，通过不断+=遍历它的所有上司，修改它们的数据 
+*/
+void update(int *arr,int current,int n,int x){
+		while(current<=n){
+			arr[current]+=x;
+			current+=current&-current;
+		}
+	}
+
+/*这个函数使用树状遍历思想，每次循环是2的指数级，从大到小遍历，
+配合已经分配好的树状数组，实现时间复杂度为logn 
+作用是将剩下人要删除位置的排名反映为初始序号*/
+int find_des(treearr *ftree,int pos){
+	int temp=1;
+	while(temp<=ftree->n){
+		temp<<=1;
+	}
+	temp>>=1;  //上面部分主要实现找到最大小于树状数组数据量的2的n次方 
+	
+	int current=0;
+	
+	while(temp>0){
+		if(current+temp<=ftree->n&&ftree->tree[current+temp]<pos){
+			pos-=ftree->tree[current+temp];
+		current+=temp;
+	}
+	temp>>=1;
+	}
+	/*这里为什么要加一呢，因为前面比较一直是小于，所以能找到差一个1就刚刚好的位置，
+	那为什么不能等于呢，因为假使1000，那么tree1和tree4的数据就是完全相等的 
+	下面按从大到小遍历2的n次方找到树状数组中，要删除位置的新下标 */
+	return current+1;
+	
+}
+
+//将前面函数结合，实现树状数组 
+void Yuetree(treearr* ft,int *arr){
+	for(int i=1;i<=ft->n;i++)
+	update(ft->tree,i,ft->n,1);
+	//树状数组数据初始化 
+	int rank=0,current=0;
+	for(int i=0;i<ft->n;i++){
+		int remaining=ft->n-i;
+		//remaining代表环内还剩几个人 
+		//这里current表示包含该序号的位置前面多少人 
+		rank=find_rank(current,arr[i],remaining);
+
+		current=find_des(ft,rank);//这里current表示的是要删除位置的原始序号 
+		printf("%d ",current);
+		update(ft->tree,current,ft->n,-1);
+		current=rank-1;//再重新由原始序号变为环中序号
+					   //减一是因为rank位置数据被删，所以该位置前面只有rank-1人 
+	}
+	deletetree(ft);
+}
+
+int main(){
+	int n;
+	scanf("%d",&n);
+	int*arr=(int*)malloc(n*sizeof(int)); 
+	for(int i=0;i<n;i++)
+	scanf("%d",&arr[i]);
+	treearr* ft=createtree(n);
+	Yuetree(ft,arr);
+	free(arr);
+	return 0;
+} 
