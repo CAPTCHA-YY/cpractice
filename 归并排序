@@ -1,0 +1,72 @@
+// 归并排序 + 统计逆序对
+#include <stdio.h>
+#include <string.h>
+
+/*
+  guibing：对 arr[left..right] 做归并排序，同时返回该区间的逆序对数量
+  - arr：原数组（会被排序）
+  - brr：辅助数组（用于合并时暂存结果）
+  - left, right：当前处理区间
+  返回：该区间内的逆序对总数
+*/
+long long guibing(int *arr, int *brr, int left, int right) {
+    // 递归终止：区间长度为 0 或 1，逆序对为 0
+    if (left >= right) return 0;
+
+    int mid = (left + right) / 2;
+
+    // 递归统计左半区间、右半区间的逆序对数量
+    long long sum = guibing(arr, brr, left, mid) + guibing(arr, brr, mid + 1, right);
+
+    // 下面开始合并两个有序区间 arr[left..mid] 和 arr[mid+1..right]
+    int a_left = left;       // 指向左半区间的当前元素
+    int a_right = mid + 1;   // 指向右半区间的当前元素
+    int b_start = left;      // brr 写入位置从 left 开始
+
+    // 当左右两边都还有元素时，进行“归并”
+    while (a_left <= mid && a_right <= right) {
+        if (arr[a_left] <= arr[a_right]) {
+            // 左边元素较小或相等，先放入 brr，不产生逆序对
+            brr[b_start++] = arr[a_left++];
+        } else {
+            // 右边元素更小：说明 arr[a_left..mid] 都 > arr[a_right]
+            // 因为左边此时是有序的，所以从 a_left 到 mid 的每个元素
+            // 都与 arr[a_right] 形成一个逆序对
+            sum += (mid - a_left + 1);
+
+            // 把右边较小的元素放入 brr
+            brr[b_start++] = arr[a_right++];
+        }
+    }
+
+    // 把左边剩余元素复制到 brr
+    while (a_left <= mid) brr[b_start++] = arr[a_left++];
+
+    // 把右边剩余元素复制到 brr
+    while (a_right <= right) brr[b_start++] = arr[a_right++];
+
+    // 将 brr[left..right] 的合并结果拷回 arr[left..right]，保证 arr 这一段有序
+    for (int i = left; i <= right; i++) arr[i] = brr[i];
+
+    return sum; // 返回当前区间逆序对数量
+}
+
+int main() {
+    int n;
+
+    scanf("%d", &n);
+
+    // 定义原数组和辅助数组
+    int arr[n];
+    int brr[n];
+
+    for (int i = 0; i < n; i++) scanf("%d", &arr[i]);
+
+    // 调用归并统计逆序对
+    long long sum = guibing(arr, brr, 0, n - 1);
+
+    // 输出逆序对数量
+    printf("%lld", sum);
+
+    return 0;
+}
