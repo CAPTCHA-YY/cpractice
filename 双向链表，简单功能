@@ -1,0 +1,96 @@
+#include <stdio.h>//双向链表，实现队头队尾添加离开的功能，还有一个查询队头序号，对了链表可以不用，数组就搞定了，好写很多
+#include <stdlib.h>
+
+// 定义双向链表节点
+typedef struct Node {
+    int id;
+    struct Node* prev; // 指向前一个节点
+    struct Node* next; // 指向后一个节点
+} Node;
+
+// 创建新节点
+Node* create_node(int val) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    new_node->id = val;
+    new_node->prev = NULL;
+    new_node->next = NULL;
+    return new_node;
+}
+
+int main() {
+    int q; // 询问次数
+    if (scanf("%d", &q) != 1) return 0;
+
+    Node* head = NULL;
+    Node* tail = NULL;
+
+    while (q--) {
+        int op;
+        scanf("%d", &op);
+
+        // 1: 队尾插入 
+        if (op == 1) {
+            int x;
+            scanf("%d", &x);
+            Node* new_node = create_node(x);
+            if (head == NULL) {
+                head = tail = new_node;
+            } else {
+                tail->next = new_node; // 旧尾指向新节点
+                new_node->prev = tail; // 新节点指回旧尾
+                tail = new_node;       // 更新尾指针
+            }
+        }
+        // 2: 队头插入
+        else if (op == 2) {
+            int x;
+            scanf("%d", &x);
+            Node* new_node = create_node(x);
+            if (head == NULL) {
+                head = tail = new_node;
+            } else {
+                new_node->next = head; // 新节点指向旧头
+                head->prev = new_node; // 旧头指回新节点
+                head = new_node;       // 更新头指针
+            }
+        }
+        // 3: 队头离开 
+        else if (op == 3) {
+            if (head == NULL) continue;
+            Node* temp = head;
+            
+            // 只有一个节点的情况
+            if (head == tail) {
+                head = NULL;
+                tail = NULL;
+            } else {
+                head = head->next; // 头指针后移
+                head->prev = NULL; // 断开与旧头的连接
+            }
+            free(temp);
+        }
+        // 4: 队尾离开  双向链表的优势！O(1)复杂度
+        else if (op == 4) {
+            if (tail == NULL) continue;
+            Node* temp = tail;
+
+            // 只有一个节点的情况
+            if (head == tail) {
+                head = NULL;
+                tail = NULL;
+            } else {
+                tail = tail->prev; // 尾指针前移 (直接找到倒数第二个)
+                tail->next = NULL; // 断开与旧尾的连接
+            }
+            free(temp);
+        }
+        // 5: 查询队头
+        else if (op == 5) {
+            if (head != NULL) {
+                printf("%d\n", head->id);
+            }
+        }
+    }
+
+    return 0;
+}
